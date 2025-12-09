@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block main %}
+    <div class="container"> <!--Wrapper for form-->
+        <h2>Login</h2>
+        <form action="/login" method="post">
+            <div>{{ msg }}</div>
+                    <input class="textbox" type="text" name="username" placeholder="Enter Username" required>                       
+                    <input class="textbox" type="password" name="password" placeholder="Enter password" required>
+          
+                    <button type="submit" class="btn btn-primary">Login</button>
+                <br>
+                </div>
+        </form>
+        <hr>
+        <p class="bottom">Don't have an account? <a href="/register">Register here</a></p>
+
+    </div>
+{% endblock %}

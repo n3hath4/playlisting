@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h2 class="word">Register</h2>
+
+        <form action="/register" method="post">
+            <div>{{ msg }}</div>
+
+            <input class="textbox" type="text" name="username" placeholder="Enter Username" required>
+            <input class="textbox" type="password" name="password" placeholder="Enter password" required>
+            <input class="textbox" type="email" name="email" placeholder="Enter email" required>
+            
+            <button class="btn btn-primary" type="submit">Register</button>
+
+        </form>
+        <hr>
+        <p class="bottom">Already have an account? <a href="/login">Login here</a></p>
+    </div>
+{% endblock %}
