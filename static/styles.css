@@ -2,3 +2,41 @@ img
 {
     padding: 10px;
 }
+
+body
+{
+    background-image: url("/static/album_background.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.container
+{
+    background-color: #252527;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.homepage
+{
+    text-align: left;
+    font-size: x-large;
+}
+
+.intro
+{
+    text-align: center;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.big-break
+{
+    display: block;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    content: "";
+    opacity: 1.0;
+    margin-left: 100px;
+}

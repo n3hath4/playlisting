@@ -12,6 +12,7 @@ env/
 .pytest_cache/
 
 # Environment files
+*.env
 .env
 .env.local
 .env.*.local

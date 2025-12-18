@@ -4,6 +4,7 @@ import sys
 import os
 import re
 
+from dotenv import load_dotenv
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_mysqldb import MySQL
@@ -12,15 +13,17 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import login_required, apology
 
+load_dotenv()
+
 # Configure application
 app = Flask(__name__)
 
 # Configure user data to use mysql
-app.secret_key = 'my-super-secret-dev-key-12345' # Hardcoded key while building # os.environ.get('SECRET_KEY') or 'dev-key-change-in-production'
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'pass'
-app.config['MYSQL_DB'] = 'geeklogin'
+app.secret_key = os.getenv('SECRET_KEY', 'dev-key-change-in-production')
+app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
+app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
+app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
+app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
 
 mysql = MySQL(app)
 
@@ -113,7 +116,7 @@ def compose():
     # return redirect("/login")
     return apology("TODO", 500)
 
-# Following tutorial documentation by geeksforgeeks, slight alteration for this website.
+# Following tutorial documentation by geeksforgeeks for getting more comfortable with MySQL, slight alteration for this website.
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Implement user login functionality
@@ -201,10 +204,9 @@ def register():
 @app.route("/add", methods=["GET", "POST"])
 @login_required
 def add():
-    """Create new playlist
-    Yet to be sure of implementation"""
     return apology("TODO", 500)
 
-
-
-
+@app.route("/about")
+def about():
+    # return render_template("about.html")
+    return apology("TODO", 500)
