@@ -10,6 +10,7 @@ venv/
 env/
 .env/
 .pytest_cache/
+flask_session/
 
 # Environment files
 *.env

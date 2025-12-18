@@ -3,6 +3,7 @@ import MySQLdb.cursors
 import sys
 import os
 import re
+import requests
 
 from dotenv import load_dotenv
 from cs50 import SQL

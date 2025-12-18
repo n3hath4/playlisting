@@ -29,7 +29,7 @@ Playlisting creates a space where music lovers can discover new artists through 
 ## 🛠 Tech Stack
 
 - **Backend:** Python, Flask, Jinja2
-- **Database:** MySQL (development) / PostgreSQL (production)
+- **Database:** MySQL, Last.fm API
 - **Frontend:** HTML, CSS, Bootstrap
 - **Deployment:** Planned for playlisting.uk
 
