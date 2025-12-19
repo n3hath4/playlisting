@@ -40,3 +40,9 @@ body
     opacity: 1.0;
     margin-left: 100px;
 }
+
+.search
+{
+    font-family: monospace;
+    text-align: left;
+}

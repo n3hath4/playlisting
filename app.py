@@ -40,14 +40,40 @@ def after_request(response):
 
 @app.route("/")
 def index():
-    """Home page - Yet to be designed"""
+    """Home page"""
     return render_template("index.html")
 
-@app.route("/browse", methods=["GET", "POST"])
+@app.route("/browse", methods=["GET"])
 @login_required
 def browse():
     """Set up database to browse songs"""
-    return apology("TODO", 500)
+    # Grab query
+    query = request.args.get('query')
+
+    # Prepare API call
+    api_key = os.getenv('LASTFM_API_KEY')
+    api_url = "http://ws.audioscrobbler.com/2.0/"
+
+    params = {
+        'method': 'track.search',
+        'track': query,
+        'api_key': api_key,
+        'format': 'json',
+        'limit': 20 
+    }
+
+    # request to last.fm API
+    response = requests.get(api_url, params=params)
+    data = response.json()
+
+    # Data structure for track.search
+    tracks = data.get('results', {}).get('trackmatches', {}).get('track', [])
+
+    return render_template("browse.html", 
+                            tracks=tracks,
+                            query=query,
+                            )
+
 
 @app.route("/forum", methods=["GET", "POST"])
 @login_required
@@ -211,3 +237,6 @@ def add():
 def about():
     # return render_template("about.html")
     return apology("TODO", 500)
+
+if __name__ == '__main__':
+    app.run()  
