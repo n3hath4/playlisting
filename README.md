@@ -15,14 +15,16 @@ Playlisting creates a space where music lovers can discover new artists through 
 **Completed:**
 - Project structure and HTML layouts (Will tailor colouring and positioning final stage)
 - Route planning and framework setup
+- Browse Route
+- User authentication with MySQL
 
 **In Progress:**
 - Genre-based discussion forums
 - Playlist curation features
-- User authentication and profile system
+- Profile system
 
 **Planned:** 
-- Music metadata integration
+- Music metadata integration (Last.fm API)
 - Advanced search and filtering
 - Community interaction features (likes, comments)
 
