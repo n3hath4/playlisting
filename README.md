@@ -16,7 +16,7 @@ Playlisting creates a space where music lovers can discover new artists through 
 - Project structure and HTML layouts (Will tailor colouring and positioning final stage)
 - Route planning and framework setup
 - Browse Route
-- User authentication with MySQL
+- User authentication with SQLite
 
 **In Progress:**
 - Genre-based discussion forums
@@ -31,7 +31,7 @@ Playlisting creates a space where music lovers can discover new artists through 
 ## 🛠 Tech Stack
 
 - **Backend:** Python, Flask, Jinja2
-- **Database:** MySQL, Last.fm API
+- **Database:** SQLite, Last.fm API
 - **Frontend:** HTML, CSS, Bootstrap
 - **Deployment:** Planned for playlisting.uk
 
