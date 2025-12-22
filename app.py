@@ -1,5 +1,3 @@
-import hashlib
-import MySQLdb.cursors
 import sys
 import os
 import re
@@ -8,7 +6,6 @@ import requests
 from dotenv import load_dotenv
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
-from flask_mysqldb import MySQL
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -19,14 +16,16 @@ load_dotenv()
 # Configure application
 app = Flask(__name__)
 
-# Configure user data to use mysql
-app.secret_key = os.getenv('SECRET_KEY', 'dev-key-change-in-production')
-app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
-app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
-app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
-app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
+# Ensure templates are auto-reloaded
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+# Configure session to use filesystem (instead of signed cookies)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = 'filesystem'
+Session(app)
 
-mysql = MySQL(app)
+# Configure SQL database
+db = SQL("sqlite:///playlisting.db")
+
 
 @app.after_request
 def after_request(response):
@@ -50,23 +49,24 @@ def browse():
     # Grab query
     query = request.args.get('query')
 
-    # Prepare API call
+    # Prepare API call - documentation provided by last.fm to set up API call
     api_key = os.getenv('LASTFM_API_KEY')
     api_url = "http://ws.audioscrobbler.com/2.0/"
 
+    # Params - variable needed to be passed through for last.fm API
     params = {
         'method': 'track.search',
         'track': query,
         'api_key': api_key,
         'format': 'json',
-        'limit': 20 
+        'limit': 50 
     }
 
     # request to last.fm API
     response = requests.get(api_url, params=params)
     data = response.json()
 
-    # Data structure for track.search
+    # Data structure for track.search - json variable for querying tracks.
     tracks = data.get('results', {}).get('trackmatches', {}).get('track', [])
 
     return render_template("browse.html", 
@@ -84,64 +84,14 @@ def forum():
 @app.route("/forum/category", methods=["GET", "POST"])
 @login_required
 def category():
-
-    # if request.args.get('category_id'):
-    #     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        
-    #     cursor.execute(
-    #         '''SELECT c.name, t.category_id, t.subject, t.topic_id, 
-    #         t.user_id, t.created, count(p.post_id) AS total_post 
-    #         FROM forum_topics as t LEFT JOIN forum_posts as p 
-    #         ON t.topic_id = p.topic_id LEFT JOIN forum_category as c 
-    #         ON t.category_id = c.category_id WHERE t.category_id = %s
-    #         GROUP BY t.topid_id ORDER BY t.topic_id DESC''', (request.args.get('category_id'),))
-            
-    #     topics = cursor.fetchall()
-
-    #     cursor.execute('''
-    #     SELECT category_if, name FROM forum_category
-    #     WHERE category_id = %s ''', (request.args.get('category_id'),))
-
-    #     category = cursor.fetchone()
-        
-    #     return render_template("category.html", 
-    #                            topics = topics,
-    #                            category = category,
-    #                            request=request
-    #                            )
-    # else:
-    #     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
-    #     cursor.execute('''
-    #     SELECT category.category_id, category.name, category.description,
-    #     count(topic.category_id) AS total_topic 
-    #     FROM forum_category category LEFT JOIN forum_topics topic
-    #     ON category.category_id = topic.category_id 
-    #     GROUP BY category.category_id ORDER BY category_id DESC
-    #     ''')
-    #     categories = cursor.fetchall()
-    #     return render_template("category.html",
-    #                            categories = categories,
-    #                            request=request) 
     return apology("TODO", 500)
 
-@app.route("/forum/compose", methods=["GET", "POST"])
+@app.route("/forum/post", methods=["GET", "POST"])
 @login_required
-def compose():
-    # if 'loggedin' in session:
-    #     if request.args.get('category_id'):
-    #         cursor = mysql.connection.cursor(MySQLdb.cursors.Dictcursor)
-
-    #         cursor.execute('''
-    #         SELECT category_id, name FROM forum_category 
-    #         WHERE category_id = %s ''', (request.args.get('category_id'),))
-            
-    #         category = cursor.fetchone()
-
-    #         return render_template("compose.html",
-    #                                category = category)
-    # return redirect("/login")
+def post():
+    """To list posts"""
     return apology("TODO", 500)
+
 
 # Following tutorial documentation by geeksforgeeks for getting more comfortable with MySQL, slight alteration for this website.
 @app.route("/login", methods=["GET", "POST"])
@@ -149,44 +99,32 @@ def login():
     """Implement user login functionality
     Display login form if user not yet login 
     otherwise implement login and direct to homepage "/" """
-    msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM accounts WHERE username = %s AND password = %s', (username, password))
-        account = cursor.fetchone()
-        if account:
-            session['loggedin'] = True
-            session['id'] = account['id']
-            session['username'] = account['username']
-            return render_template("index.html",
-                                   msg='Logged in successfully!')
-        else:
-            msg = 'Incorrect username/password!'
-    return render_template("login.html", msg=msg)
-    
-        
-@app.route("/forum/post", methods=["GET", "POST"])
-@login_required
-def post():
-    """To list posts"""
-    return apology("TODO", 500)
 
-@app.route("/forum/save_post", methods=["GET", "POST"])
-@login_required
-def save_post():
-    """Implement to save post
-    -Create form with create post
-    in a topic with action save_post to save post"""
-    return apology("TODO", 500)
+        # Query for username
+        rows = db.execute('SELECT * FROM users WHERE username = %s', (username))
+        if not check_password_hash(rows[0]["hash"], (password)):
+            return apology("Invalid username and/or password", 400)
+
+        if rows:
+            session['loggedin'] = True
+            session['user_id'] = rows[0]['id']
+            session['username'] = rows[0]['username']
+            flash('Logged in successfully!')
+            return render_template("index.html")
+        else:
+            flash('Incorrect username/password!')
+            return redirect("/login")
+    return render_template("login.html")
 
 
 @app.route("/logout")
 def logout():
     """Log user out"""
     session.pop('loggedin', None)
-    session.pop('id', None)
+    session.pop('user_id', None)
     session.pop('username', None)
     return redirect("/")
 
@@ -206,27 +144,35 @@ def liked():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """"Register user"""
-    msg = ''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM accounts WHERE username = %s', (username,))
-        account = cursor.fetchone()
-        if account:
-            msg = 'Account already exists!'
+
+        rows = db.execute('SELECT * FROM users WHERE username = ?', (username))
+
+        if rows:
+            flash('Account already exists!')
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address!'
+            flash('Invalid email address!')
         elif not re.match(r'[A-Za-z0-9]+', username):
-            msg = 'Username must contain only letters and numbers!'
+            flash('Username must contain only letters and numbers!')
         elif not username or not password or not email:
-            msg = 'Please fill out the form!'
+            flash('Please fill out the form!')
         else:
-            cursor.execute('INSERT INTO accounts VALUES (NULL, %s, %s, %s)', (username, password, email))
-            mysql.connection.commit()
+            password_hash = generate_password_hash(password)
+            new_user_id = db.execute('INSERT INTO users (username, hash, email) VALUES(?, ?, ?)', username, password_hash, email)
+
+            rows = db.execute(
+                "SELECT * FROM users WHERE username =?", (username))
+            
+            # Remember (keeps track of) which user has logged in
+            new_user_id = rows[0]["id"]
+            session["user_id"] = new_user_id
+
             flash('You have successfully registered!')
-    return render_template("register.html", msg=msg)
+            return redirect("/")
+    return render_template("register.html")
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required
@@ -235,8 +181,8 @@ def add():
 
 @app.route("/about")
 def about():
-    # return render_template("about.html")
-    return apology("TODO", 500)
+    return render_template("about.html")
+
 
 if __name__ == '__main__':
     app.run()  

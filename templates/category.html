@@ -5,32 +5,6 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container">
-        <div class="row">
-            <h1>Discussion Forum</h1><br>
-            {% if request.args.get('category_id') %}
-                    <div class="single category">
-                            <span style="font-size:20px;"><a href="{{ url_for('category') }}">{{ category.name}}</a></span>
-                            <br>
-                            <br>
-                            <ul class="list-unstyled">
-                                        <li class="text-right">
-
-                                        <a type="button" class="btn btn-primary" href="{{url_for('compose', category_id=category.category_id)}}"><span style="font-size:20px;font-weight:bold;color:white;">Create New Topic</span></a>
-
-                                        </li><br>
-                                        <li><span style="font-size:20px;font-weight:bold;">Topics</span>
-                                        <span class="pull-right"><span style="font-size:15px;font-weight:bold;">Posts</span></span></li>
-                                        {% for topic in topics %}
-
-                                                <li><a href="{{url_for('post', topic_id=topic.topic_id)}}" title="">{{ topic.subject }} <span class="pull-right">{{ topic.total_post }}</span></a></li>
-                                        
-                                        {% endfor %}
-                            </ul>
-                    </div>
-            {% endif %}
-        </div>
-    </div>
 
 
 {% endblock %} 
