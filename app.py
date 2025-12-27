@@ -5,7 +5,7 @@ import requests
 
 from dotenv import load_dotenv
 from cs50 import SQL
-from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -74,23 +74,41 @@ def browse():
                             query=query,
                             )
 
-
+# View all categories
 @app.route("/forum", methods=["GET", "POST"])
 @login_required
 def forum():
     """Discussion Forum for music discovery"""
+    categories = db.execute(
+        "SELECT id, name, description FROM forum_categories"
+    )
+
+    return render_template("forum.html", 
+                           categories=categories)
+
+# View topics in a category
+@app.route("/forum/<genre>", methods=["GET", "POST"])
+@login_required
+def forum_genre(genre):
     return apology("TODO", 500)
 
-@app.route("/forum/category", methods=["GET", "POST"])
-@login_required
-def category():
-    return apology("TODO", 500)
+# View specific topic with all its replies
+# @app.route("/forum/<genre>/<topic_id>")
+# @login_required
+# def forum_genre_topic():
+#     return apology("TODO", 500)
 
-@app.route("/forum/post", methods=["GET", "POST"])
-@login_required
-def post():
-    """To list posts"""
-    return apology("TODO", 500)
+# # Create New topic in a genre
+# @app.route("/forum/<genre>/new", methods=["GET", "POST"])
+# @login_required
+# def forum_genre_new():
+#     return apology("TODO", 500)
+
+# # Add reply to existing topic
+# @app.route("/forum/<genre>/<topic_id>/reply", methods=["GET", "POST"])
+# @login_required
+# def forum_genre_reply():
+#     return apology("TODO", 500)
 
 
 # Following tutorial documentation by geeksforgeeks for getting more comfortable with MySQL, slight alteration for this website.
@@ -132,7 +150,48 @@ def logout():
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
-    return apology("TODO", 500)
+    """Allow users to change their passwords"""
+    rows = db.execute(
+        "SELECT * FROM users WHERE id = ?", session["user_id"]
+    )
+
+    old_password = request.form.get("old_password")
+    new_password = request.form.get("new_password")
+    new_confirmation = request.form.get("new_confirmation")
+
+    if request.method == "POST":
+
+        if not request.form.get("old_password"):
+            return apology("Must enter original password", 400)
+        elif not check_password_hash(rows[0]["hash"], request.form.get("old_password")):
+            return apology("Original password does not match", 400)
+        elif not request.form.get("new_password"):
+            return apology("New password required", 400)
+        elif not request.form.get("new_confirmation"):
+            return apology("New password must be typed twice", 400)
+        elif new_password != new_confirmation:
+            return apology("New passwords do not match", 400)
+
+        # once old password correctly entered, we need to delete old hash and insert new hash in the same place for same user
+        new_password_hash = generate_password_hash("new_password")
+
+        # UPDATE query for Existing values, that just need modifying/updating
+        db.execute(
+            "UPDATE users SET hash = ? WHERE id = ?", new_password_hash, session["user_id"]
+        )
+
+        return redirect("/")
+
+    else:
+        user_data = db.execute(
+            "SELECT username FROM users WHERE id = ?", session["user_id"]
+        )
+        username = user_data[0].get("username")
+
+
+        return render_template("profile.html",
+                               user=user_data,
+                               username=username)
 
 @app.route("/liked", methods=["GET", "POST"])
 @login_required

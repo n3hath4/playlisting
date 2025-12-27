@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Forum
+{% endblock %}
+
+{% block main %}
+    <h2>Forum</h2>
+    <table class="table table-striped table-dark">
+        <tr>
+            <th>#</th>
+            <th>Genre</th>
+            <th>Description</th>
+        </tr>
+        {% for category in categories %}
+        <tr>
+            <td>{{ category.id }}</td>
+            <td>{{ category.name }}</td>
+            <td>{{ category.description }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
