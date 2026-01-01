@@ -1,4 +1,4 @@
-# Playlisting.uk 🎵 (In Development)
+# Playlisting Web Application 🎵 (In Development)
 
 A community-driven music discovery platform bringing the gap between physical media curation and algorithmic recommendations.
 
@@ -15,17 +15,16 @@ Playlisting creates a space where music lovers can discover new artists through 
 **Completed:**
 - Project structure and HTML layouts (Will tailor colouring and positioning final stage)
 - Route planning and framework setup
-- Browse Route
+- Browse Route - Integration of Last.fm API
 - User authentication with SQLite
 
 **In Progress:**
 - Genre-based discussion forums
-- Playlist curation features
-- Profile system
+- Profile system (Change/Update password)
 
 **Planned:** 
-- Music metadata integration (Last.fm API)
-- Advanced search and filtering
+- Music metadata integration (Last.fm API) with Album image and potential track playback
+- Playlist curation features (Liked and Add new unique Playlist option)
 - Community interaction features (likes, comments)
 
 ## 🛠 Tech Stack
@@ -33,7 +32,6 @@ Playlisting creates a space where music lovers can discover new artists through 
 - **Backend:** Python, Flask, Jinja2
 - **Database:** SQLite, Last.fm API
 - **Frontend:** HTML, CSS, Bootstrap
-- **Deployment:** Planned for playlisting.uk
 
 ## 📚 Learning Journey
 
