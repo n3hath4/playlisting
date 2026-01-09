@@ -1,9 +1,9 @@
-## 🚧 Project Status: On Hold
+# 🚧 Project Status: On Hold
 Active development on this project is currently paused as I focus on preparing for my A-Level Mathematics exams (sitting May/June 2026) and completing my postgraduate applications.
 I plan to resume work and complete this project after my exam season.
 Thank you for your understanding!
 
-# Playlisting Web Application 🎵 (In Development)
+## Playlisting Web Application 🎵 (In Development)
 
 A community-driven music discovery platform bringing the gap between physical media curation and algorithmic recommendations.
 
